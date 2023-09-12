@@ -42,12 +42,12 @@ def classification2(img_path):
 def segment(img_path):
     if img_path == '':
         return None
-    file_path, file_name, orginal_path, all_vessel_num, calc_vessel_num, max_dia, mean_dia = predict_segment.main(
+    files_path, files_name, orginal_path, all_vessel_num, calc_vessel_num, max_dia, mean_dia = predict_segment.main(
         model_segment, trainer)
-    orginal_name = file_name + "_orginal"
+    orginal_name = files_name + "_orginal"
     url_oringal_img = minio_util.upload_data(minio_client=minio_client, file_path=orginal_path, file_name=orginal_name,
                                              minio_bucket=minio_bucket)
-    url_segment_img = minio_util.upload_data(minio_client=minio_client, file_path=file_path, file_name=file_name,
+    url_segment_img = minio_util.upload_data(minio_client=minio_client, file_path=files_path, file_name=files_name,
                                              minio_bucket=minio_bucket)
     utils.delete()
     data = json.jsonify(

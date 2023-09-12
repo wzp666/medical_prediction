@@ -1,7 +1,7 @@
-/model_2class/best-0.955.pth
-/model_5class/best-0.833.pth
-/model_segment/epoch=19-step=400.ckpt
-/disease_segmentation_version5/lightning_logs/version_5/checkpoints/epoch=19-step=400.ckpt
+/model_2class/
+/model_5class/
+/model_segment/
+/disease_segmentation_version5/lightning_logs/version_5/checkpoints/
 /disease_segmentation_version5/lightning_logs/version_5/predictions/epoch_train_20.png
 /disease_segmentation_version5/lightning_logs/version_5/predictions/epoch_train_40.png
 /disease_segmentation_version5/lightning_logs/version_5/predictions/epoch_train_60.png

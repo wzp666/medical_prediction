@@ -10,7 +10,7 @@ from torchvision.io import read_image
 
 SAMPLES_N = 20
 RATIO = 1000 / 1024 * 0.9
-
+DIA_THRESHOLD = 50
 
 def init(img_nparr):
     # img_path = os.path.join(img_path)
@@ -44,6 +44,10 @@ def find_dia(labels, num_labels_arr, preserve_ratio=1 / 3):
     global_max_dia = 0
     global_sum_dia = 0
     # print(num_labels)
+
+    global_dia_large_num = 0
+
+
     for label in num_labels_arr:
         label_img = np.argwhere(labels == label)
 
@@ -113,12 +117,15 @@ def find_dia(labels, num_labels_arr, preserve_ratio=1 / 3):
         global_max_dia = max(global_max_dia, dia_len)
         global_sum_dia += dia_len
 
-    if len(inner_points_list) == 0:
-        global_mean_dia = 0
-    else:
-        global_mean_dia = np.round(global_sum_dia / len(inner_points_list), 4)
+        if dia_len >= DIA_THRESHOLD:
+            global_dia_large_num += 1
 
-    return img, inner_points_list, outer_points_list, global_max_dia, global_mean_dia
+    # if len(inner_points_list) == 0:
+    #     global_mean_dia = 0
+    # else:
+    #     global_mean_dia = np.round(global_sum_dia / len(inner_points_list), 4)
+
+    return img, inner_points_list, outer_points_list, global_max_dia, global_sum_dia, global_dia_large_num
 
 
 def find_outer_points_v2(inner_points, labels, label, ratio=0.0):
@@ -194,6 +201,8 @@ def calc_dis(inner_point, outer_points):
     point = np.tile(point, (len(outer_points), 1))
 
     distances = np.round(np.sqrt(np.sum((outer_points - point) ** 2, axis=1)) * RATIO, 4)
+    print("distances", distances)
+    print("DIA_THRESHOLD", DIA_THRESHOLD)
 
     # 找到距离最大的点的索引
     max_index = np.argmax(distances)
@@ -244,10 +253,11 @@ def transform_coordinate(pos):
 
 def main(np_arr):
     num_labels, labels = init(np_arr)
-    num_labels_arr = drop_small_area(labels, num_labels, threshold=1000)
-    img, inner_points_list, outer_points_list, max_dia, mean_dia = find_dia(labels, num_labels_arr, 0.5)
+    num_labels_arr = drop_small_area(labels, num_labels, threshold=1200)
+    img, inner_points_list, outer_points_list, max_dia, mean_dia, large_dia_num = find_dia(labels, num_labels_arr, 0.5)
     all_vessel_num = len(num_labels_arr)
-    calc_vessel_num = len(outer_points_list)
+    # calc_vessel_num = len(outer_points_list)
+    calc_vessel_num = large_dia_num
     return img, inner_points_list, outer_points_list, all_vessel_num, calc_vessel_num, max_dia, mean_dia
 
 
